@@ -19,6 +19,10 @@ Zotero Research Assistant is a portable **Agent Skill** that lets Codex, Claude 
 
 It uses a local Python JSON CLI rather than an MCP server. The agent reads `SKILL.md`, runs deterministic commands, and grounds its answer in returned Zotero data instead of guessing what is in your library.
 
+## Agent-driven Zotero Skill
+
+This repository does not include or launch an LLM, model SDK, standalone chatbot, or local-model runtime. Codex, Claude Code, WorkBuddy, or another compatible Agent performs all reasoning and invokes the bundled Zotero tools automatically. In this documentation, **local mode means Zotero's local API**, not a local AI model.
+
 ```mermaid
 flowchart LR
     A["Codex / Claude Code / WorkBuddy"] --> B["SKILL.md workflow"]
@@ -71,145 +75,110 @@ In Zotero, enable:
 
 ## Quick start
 
-```bash
-git clone <your-repository-url>
-cd zotero-research-assistant
-python -m pip install -r requirements.txt
-```
+### 1. Get the project
 
-Create the local configuration:
-
-### Windows Command Prompt
-
-```cmd
-copy .env.example .env
-python scripts\zotero_cli.py health
-```
-
-### macOS / Linux
+Option A — clone with Git:
 
 ```bash
-cp .env.example .env
-python scripts/zotero_cli.py health
+git clone https://github.com/Bubble-OoO/zotero-research-assistant-skill.git
 ```
 
-A successful local connection returns:
+Option B — open the [GitHub repository](https://github.com/Bubble-OoO/zotero-research-assistant-skill), choose **Code → Download ZIP**, or use this direct [ZIP download](https://github.com/Bubble-OoO/zotero-research-assistant-skill/archive/refs/heads/main.zip), then extract it. The extracted directory is usually named `zotero-research-assistant-skill-main`.
 
-```json
-{
-  "ok": true,
-  "mode": "local",
-  "writeConfigured": false
-}
+### 2. Let Codex configure it automatically
+
+Open the cloned or extracted project directory in Codex, start a normal task, and paste the prompt below. The Skill is not installed yet, so do not invoke `$zotero-research-assistant` at this stage:
+
+```text
+Configure the Zotero Research Assistant Skill in the current directory automatically. Read SKILL.md, README.md, and references/setup.md first, then:
+1. Detect an available Python 3.10+ or Conda environment, select a suitable interpreter, and install requirements.txt.
+2. If .env does not exist, create it from .env.example; set ZOTERO_PYTHON to the selected interpreter's absolute path and keep ZOTERO_LOCAL=true. Do not overwrite an existing .env or credentials.
+3. Link the current repository at the user-level path ~/.agents/skills/zotero-research-assistant; do not make a second source copy.
+4. Run scripts/run_zotero.py health, then clearly report the checks and anything I still need to do.
+5. Do not install or configure MCP or a local model. Do not request a Zotero API key for local read-only mode.
+6. Do not ask me to run commands or edit configuration files manually. Perform safe, reversible setup actions directly, and request my input only for permissions, credentials, or Zotero UI actions.
 ```
 
-## Connection modes
+Codex will choose Python or Conda based on the operating system and available environments. It may request approval before installing dependencies or writing to the user-level Skill directory; review the target and approve the operation. If automatic setup fails, use the manual setup and troubleshooting steps in [references/setup.md](references/setup.md).
 
-| Mode | Reads | Writes | Required configuration |
-| --- | --- | --- | --- |
-| Local | Zotero desktop local API | Disabled | `ZOTERO_LOCAL=true` |
-| Hybrid | Local API | Zotero Web API | Local mode plus library ID and API key |
-| Cloud | Zotero Web API | Zotero Web API | `ZOTERO_LOCAL=false`, library ID, API key |
+### 3. Start using the Skill
 
-Minimal local `.env`:
+After setup succeeds, start a new Codex task and invoke:
 
-```dotenv
-ZOTERO_LOCAL=true
-ZOTERO_DATA_DIR=~/Zotero
+```text
+$zotero-research-assistant List papers in the “Human-Computer Interaction” collection and its subcollections.
 ```
 
-For hybrid or cloud writes, also configure:
+The Agent loads `SKILL.md`, checks the Zotero connection, resolves the collection exactly, and runs the required scripts. If the Skill is not discovered, ask the Agent to inspect and repair the `.agents/skills` link; users do not need to debug paths themselves.
 
-```dotenv
-ZOTERO_LIBRARY_ID=
-ZOTERO_LIBRARY_TYPE=user
-ZOTERO_API_KEY=
+## Daily use: tell the Agent your goal
+
+You do not need to remember commands or flags. Ask for the research outcome directly, for example:
+
+```text
+$zotero-research-assistant Find papers in the “Human-Computer Interaction” collection, then report the resolved collection path and total paper count.
 ```
 
-Do not commit `.env` or paste API keys into agent prompts.
-
-## Install into an agent
-
-Run the bundled installer from the project root:
-
-```bash
-python scripts/install_skill.py codex
-python scripts/install_skill.py claude
-python scripts/install_skill.py workbuddy
+```text
+$zotero-research-assistant Read the selected paper's PDF and annotations, then summarize its research question, method, and conclusions.
 ```
 
-The installer intentionally does not copy `.env`. Copy it separately into the installed Skill directory so updates cannot overwrite local credentials.
-
-| Agent | Personal Skill location | Example invocation |
-| --- | --- | --- |
-| Codex | `~/.codex/skills/zotero-research-assistant/` | `$zotero-research-assistant list papers in “Human-Computer Interaction”` |
-| Claude Code | `~/.claude/skills/zotero-research-assistant/` | `/zotero-research-assistant list papers in “Human-Computer Interaction”` |
-| WorkBuddy | Import the folder/ZIP in the Skills UI, or use `~/.workbuddy/skills/` where supported | Ask naturally and select the Skill |
-
-Restart the agent or open a new task if a newly created top-level Skill directory is not detected immediately.
-
-## CLI examples
-
-```bash
-# Check connection
-python scripts/zotero_cli.py health
-
-# Find the exact collection and see its full path
-python scripts/zotero_cli.py find-collection "Human-Computer Interaction"
-
-# Read documents in a collection and all subcollections
-python scripts/zotero_cli.py collection-items "Human-Computer Interaction" --recursive --limit 200
-
-# Search the whole library
-python scripts/zotero_cli.py search "human AI collaboration" --limit 50
-
-# Search only inside one collection
-python scripts/zotero_cli.py search "evaluation" --collection "Human-Computer Interaction" --recursive
-
-# Read metadata, annotations, or a PDF text window
-python scripts/zotero_cli.py item ITEMKEY
-python scripts/zotero_cli.py annotations ITEMKEY
-python scripts/zotero_cli.py read ITEMKEY --start 0 --max-chars 12000
+```text
+$zotero-research-assistant Compare the methods, datasets, and limitations of these papers in the “Human-Computer Interaction” collection.
 ```
 
-All commands write JSON to stdout and return a non-zero exit code when `ok` is false.
+The Agent selects collection, metadata, PDF text, annotation, or note tools automatically and grounds its answer in real Zotero output. Users do not run Python.
 
-## Standalone PDFs
+## Let the Agent manage connection settings
+
+Local read-only mode is the default and needs no Zotero API key. To inspect or change the mode, ask directly:
+
+```text
+$zotero-research-assistant Inspect my current Zotero connection configuration and automatically repair issues that are safe to fix. Do not reveal credentials.
+```
+
+```text
+$zotero-research-assistant Switch this installation to Zotero local read-only mode, preserve existing credentials, and run a health check afterward.
+```
+
+```text
+$zotero-research-assistant Help me configure Zotero cloud or hybrid mode. Inspect existing settings first, request only values that are actually missing, update .env safely, and verify the connection without displaying the API key.
+```
+
+The Agent inspects and updates `.env`. Never paste an API key into a prompt or commit it to Git; when a new credential is required, the Agent should direct the user to a secure local input method. See [references/setup.md](references/setup.md) for the full configuration reference and discovery paths for other Agents.
+
+## Standalone PDFs are handled automatically
 
 Zotero can store a PDF either under a bibliographic parent item or as a parentless standalone attachment.
 
 - Child PDF attachments are excluded from collection results to avoid counting the same paper twice.
 - Parentless PDFs are included with `"standaloneAttachment": true`.
-- For richer metadata, right-click a standalone PDF in Zotero and use **Retrieve Metadata for PDF**.
+- If a standalone PDF lacks author, year, or DOI metadata, the Agent reports the missing fields and suggests **Retrieve Metadata for PDF** in Zotero instead of inventing metadata.
 
-## Safe writes
+## Agent-executed writes with confirmation
 
-Notes and tags use a two-step workflow:
+Ask the Agent to add a note or tags directly:
 
-1. The agent displays the exact content or tags.
-2. The user explicitly confirms in a later message.
-3. The agent reruns the command with `--confirm-write`.
-
-Without the flag, the CLI rejects the operation before opening a write client.
-
-```bash
-python scripts/zotero_cli.py add-tags ITEMKEY reviewed important --confirm-write
+```text
+$zotero-research-assistant Draft a Zotero note from this paper's PDF and prepare it for writing.
 ```
 
-Writes require a write-capable Zotero API key, even when reads use local mode.
+The Agent displays the complete proposed change first. It performs the write automatically only after the user explicitly confirms in a later message; otherwise, the CLI rejects the operation. Writes require a write-capable Zotero API key, but the user never runs the write command manually.
 
-## Testing
+## Let the Agent test and troubleshoot
 
-```bash
-python -B -m unittest discover -s tests -v
+From the project directory, tell Codex:
+
+```text
+Inspect this Zotero Skill automatically: validate the Skill structure, run the full test suite and health check, fix project-owned issues, and report the results. Do not ask me to run commands manually, and do not modify or reveal existing credentials.
 ```
 
-The test suite covers exact and ambiguous collection resolution, recursive item retrieval, deduplication, collection-scoped search, standalone PDFs, CLI JSON output, and write confirmation.
+This plain prompt also works from the source directory when the Skill has not yet been discovered. The Agent checks the interpreter, dependencies, `.env`, Skill link, and Zotero connection. Only starting Zotero, enabling local Zotero communication, supplying new credentials, approving protected filesystem operations, and confirming external writes require user action.
 
 ## Project structure
 
 ```text
-zotero-research-assistant/
+zotero-research-assistant-skill/
 ├── SKILL.md                 # Agent workflow and safety rules
 ├── README.md                # English documentation
 ├── README.zh-CN.md          # Simplified Chinese documentation
@@ -221,9 +190,8 @@ zotero-research-assistant/
 │   └── setup.md             # Detailed setup and troubleshooting
 ├── scripts/
 │   ├── zotero_cli.py        # Agent-neutral JSON CLI
-│   ├── zotero_tools.py      # Zotero read/write implementation
-│   ├── install_skill.py     # Local Skill installer
-│   └── deepseek_agent.py    # Optional standalone chat agent
+│   ├── run_zotero.py        # Interpreter-selecting bootstrapper
+│   └── zotero_tools.py      # Zotero read/write implementation
 └── tests/
 ```
 
@@ -236,5 +204,3 @@ The project adopts capability ideas from:
 - [Pyzotero](https://github.com/urschrei/pyzotero)
 
 This implementation does **not** use MCP; it exposes equivalent core research operations through a local Skill and JSON CLI.
-
-# refresh

@@ -20,9 +20,9 @@ except ImportError:  # Allow tests and --help to run before dependencies are ins
     zotero = None
 
 try:
-    import fitz
+    import pymupdf
 except ImportError:
-    fitz = None
+    pymupdf = None
 
 
 NON_DOCUMENT_ITEM_TYPES = {"note", "annotation"}
@@ -433,17 +433,17 @@ def _attachment_text(zot, attachment: dict[str, Any]) -> str:
     except Exception:
         pass
     local_path = _local_pdf_path(attachment)
-    if local_path and fitz is not None:
-        with fitz.open(local_path) as document:
+    if local_path and pymupdf is not None:
+        with pymupdf.open(local_path) as document:
             return "\n".join(page.get_text() for page in document)
-    if fitz is None:
+    if pymupdf is None:
         raise RuntimeError("Zotero 全文索引不可用，且未安装 PyMuPDF 读取 PDF")
     content = zot.file(attachment["key"])
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as handle:
         handle.write(content)
         temp_path = Path(handle.name)
     try:
-        with fitz.open(temp_path) as document:
+        with pymupdf.open(temp_path) as document:
             return "\n".join(page.get_text() for page in document)
     finally:
         temp_path.unlink(missing_ok=True)

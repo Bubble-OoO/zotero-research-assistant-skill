@@ -1,7 +1,4 @@
 interface:
   display_name: "Zotero Research Assistant"
-  short_description: "Search and analyze a local Zotero library without MCP"
-  default_prompt: "Use $zotero-research-assistant to inspect my Zotero library and ground the answer in actual library data."
-
-policy:
-  allow_implicit_invocation: true
+  short_description: "Search and analyze Zotero without MCP"
+  default_prompt: "Use $zotero-research-assistant to list papers in the Human-Computer Interaction collection and its subcollections."

@@ -10,12 +10,16 @@ import sys
 from pathlib import Path
 
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
+
 SKILL_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 
 def _load_env(path: Path) -> None:
-    """Load a small .env subset without requiring python-dotenv."""
+    """Load the supported .env subset without a third-party parser."""
     if not path.is_file():
         return
     for raw_line in path.read_text(encoding="utf-8-sig").splitlines():
