@@ -19,6 +19,11 @@ Zotero Research Assistant is a portable **Agent Skill** that lets Codex, Claude 
 
 It uses a local Python JSON CLI rather than an MCP server. The agent reads `SKILL.md`, runs deterministic commands, and grounds its answer in returned Zotero data instead of guessing what is in your library.
 
+## NEW
+
+- **260811** — Added one-sentence automatic installation: an Agent can download the repository, register the Skill, install dependencies, create a safe local configuration, and verify the connection.
+- **260809** — Reworked the project as an Agent-driven Zotero Skill without MCP; strengthened exact collection resolution, recursive retrieval, deduplication, and standalone PDF handling.
+
 ## Agent-driven Zotero Skill
 
 This repository does not include or launch an LLM, model SDK, standalone chatbot, or local-model runtime. Codex, Claude Code, WorkBuddy, or another compatible Agent performs all reasoning and invokes the bundled Zotero tools automatically. In this documentation, **local mode means Zotero's local API**, not a local AI model.
@@ -73,35 +78,17 @@ In Zotero, enable:
 
 `Settings → Advanced → Allow other applications on this computer to communicate with Zotero`
 
-## Quick start
+## Quick start: one-sentence automatic installation
 
-### 1. Get the project
-
-Option A — clone with Git:
-
-```bash
-git clone https://github.com/Bubble-OoO/zotero-research-assistant-skill.git
-```
-
-Option B — open the [GitHub repository](https://github.com/Bubble-OoO/zotero-research-assistant-skill), choose **Code → Download ZIP**, or use this direct [ZIP download](https://github.com/Bubble-OoO/zotero-research-assistant-skill/archive/refs/heads/main.zip), then extract it. The extracted directory is usually named `zotero-research-assistant-skill-main`.
-
-### 2. Let Codex configure it automatically
-
-Open the cloned or extracted project directory in Codex, start a normal task, and paste the prompt below. The Skill is not installed yet, so do not invoke `$zotero-research-assistant` at this stage:
+Send the following single sentence to Codex, Claude Code, WorkBuddy, or another terminal-capable Agent with Agent Skills support:
 
 ```text
-Configure the Zotero Research Assistant Skill in the current directory automatically. Read SKILL.md, README.md, and references/setup.md first, then:
-1. Detect an available Python 3.10+ or Conda environment, select a suitable interpreter, and install requirements.txt.
-2. If .env does not exist, create it from .env.example; set ZOTERO_PYTHON to the selected interpreter's absolute path and keep ZOTERO_LOCAL=true. Do not overwrite an existing .env or credentials.
-3. Link the current repository at the user-level path ~/.agents/skills/zotero-research-assistant; do not make a second source copy.
-4. Run scripts/run_zotero.py health, then clearly report the checks and anything I still need to do.
-5. Do not install or configure MCP or a local model. Do not request a Zotero API key for local read-only mode.
-6. Do not ask me to run commands or edit configuration files manually. Perform safe, reversible setup actions directly, and request my input only for permissions, credentials, or Zotero UI actions.
+Download and install zotero-research-assistant-skill from https://github.com/Bubble-OoO/zotero-research-assistant-skill: prefer Git, but download and extract the ZIP if Git is unavailable; detect and register it in the current Agent's user-level Skills directory, read the repository instructions, detect Python 3.10+ or Conda, install requirements.txt, create a local read-only Zotero .env without overwriting existing configuration or credentials, run the health check, and confirm that the Skill can be invoked; do not configure MCP or a local model, do not ask me to run commands manually, and request my input only for network, terminal, or protected-directory approval, Zotero UI settings, or new credentials.
 ```
 
-Codex will choose Python or Conda based on the operating system and available environments. It may request approval before installing dependencies or writing to the user-level Skill directory; review the target and approve the operation. If automatic setup fails, use the manual setup and troubleshooting steps in [references/setup.md](references/setup.md).
+The Agent handles download, dependency installation, Skill registration, configuration, and validation. The user only reviews and approves required permission prompts. If the Agent lacks local terminal or Agent Skills support, it should report that limitation instead of claiming success.
 
-### 3. Start using the Skill
+### Use it immediately after installation
 
 After setup succeeds, start a new Codex task and invoke:
 

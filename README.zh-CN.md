@@ -19,6 +19,11 @@ Zotero Research Assistant 是一个可移植的 **Agent Skill**，可以让 Code
 
 项目不启动 MCP Server，而是提供本地 Python JSON CLI。智能体读取 `SKILL.md`，执行确定性的本地命令，并根据 Zotero 返回的真实数据回答，避免凭空猜测用户的文献库内容。
 
+## NEW
+
+- **260811** — 新增“一句话自动安装”：Agent 可自动下载仓库、注册 Skill、安装依赖、创建安全的本地配置并验证连接。
+- **260809** — 将项目重构为无需 MCP、由 Agent 驱动的 Zotero Skill，并加强精确目录解析、递归读取、去重和独立 PDF 处理。
+
 ## 由智能体驱动的 Zotero Skill
 
 本仓库不包含或启动任何大语言模型、模型 SDK、独立聊天程序或本地模型运行时。所有推理均由 Codex、Claude Code、WorkBuddy 或其他兼容 Agent 完成，Agent 会自动调用本项目提供的 Zotero 工具。本文中的“本地模式”仅指 **Zotero 本地 API**，不表示本地 AI 模型。
@@ -73,35 +78,17 @@ Skill 不会把“人机交互”当成全库关键词，而是：
 
 `设置 → 高级 → 允许此计算机上的其他程序与 Zotero 通讯`
 
-## 快速开始
+## 快速开始：一句话自动安装
 
-### 1. 获取项目
-
-方式一：使用 Git 克隆：
-
-```bash
-git clone https://github.com/Bubble-OoO/zotero-research-assistant-skill.git
-```
-
-方式二：打开 [GitHub 仓库](https://github.com/Bubble-OoO/zotero-research-assistant-skill)，选择 **Code → Download ZIP**，或者直接[下载 ZIP](https://github.com/Bubble-OoO/zotero-research-assistant-skill/archive/refs/heads/main.zip)，然后解压。下载后的目录名称通常是 `zotero-research-assistant-skill-main`。
-
-### 2. 让 Codex 自动完成配置
-
-在 Codex 中打开刚才克隆或解压的项目目录，新建一个普通任务并粘贴以下内容。此时 Skill 还没有安装，所以不要先使用 `$zotero-research-assistant`：
+将下面这一句话直接发送给 Codex、Claude Code、WorkBuddy 或其他具备终端能力并支持 Agent Skills 的 Agent：
 
 ```text
-请自动配置当前目录中的 Zotero Research Assistant Skill。请先阅读 SKILL.md、README.zh-CN.md 和 references/setup.md，然后：
-1. 检测可用的 Python 3.10+ 或 Conda 环境，选择合适的解释器并安装 requirements.txt。
-2. 如果 .env 不存在，从 .env.example 创建；写入所选解释器的绝对路径作为 ZOTERO_PYTHON，并保持 ZOTERO_LOCAL=true。不要覆盖已有 .env 或凭据。
-3. 将当前仓库链接到用户级 ~/.agents/skills/zotero-research-assistant；不要复制出第二份源码。
-4. 运行 scripts/run_zotero.py health 验证环境，并清楚报告检查结果和仍需我完成的操作。
-5. 不要安装或配置 MCP，不要配置本地模型；本地只读模式不需要索取 Zotero API key。
-6. 不要让我手动运行命令或编辑配置文件；直接执行安全且可逆的配置操作，只在需要权限、凭据或 Zotero 界面操作时请求我确认。
+请从 https://github.com/Bubble-OoO/zotero-research-assistant-skill 下载并安装 zotero-research-assistant-skill：优先使用 Git，Git 不可用时下载并解压 ZIP；自动识别当前 Agent 的用户级 Skill 目录并注册，读取仓库说明，检测 Python 3.10+ 或 Conda、安装 requirements.txt、在不覆盖现有配置和凭据的前提下创建 Zotero 本地只读 .env，运行健康检查并确认能够调用；不要配置 MCP 或本地模型，不要让我手动执行命令，只在需要网络、终端或目录写入权限、Zotero 界面设置或新凭据时请求我确认。
 ```
 
-Codex 会根据操作系统和现有环境选择 Python 或 Conda。安装依赖和写入用户级 Skill 目录时，Codex 可能弹出终端或文件权限确认；请检查目标路径后批准。自动配置失败时，再查看 [references/setup.md](references/setup.md) 中的手动安装和故障排查。
+Agent 会完成下载、依赖安装、Skill 注册、配置和验证。用户只需检查并批准必要的权限请求；如果 Agent 不支持本地终端或 Agent Skills，它应明确报告不支持，而不是假装安装成功。
 
-### 3. 直接开始使用
+### 安装完成后直接使用
 
 配置成功后，新建一个 Codex 任务并直接调用：
 
