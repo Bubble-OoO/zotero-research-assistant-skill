@@ -21,8 +21,8 @@ Zotero Research Assistant 是一个可移植的 **Agent Skill**，可以让 Code
 
 ## 🆕 NEW
 
-- **260811** — 新增“一句话自动安装”：Agent 可自动下载仓库、注册 Skill、安装依赖、创建安全的本地配置并验证连接。
-- **260809** — 将项目重构为无需 MCP、由 Agent 驱动的 Zotero Skill，并加强精确目录解析、递归读取、去重和独立 PDF 处理。
+- 📢 **260811** — 新增“一句话自动安装”：Agent 可自动下载仓库、注册 Skill、安装依赖、创建安全的本地配置并验证连接。
+- 📢 **260809** — 将项目重构为无需 MCP、由 Agent 驱动的 Zotero Skill，并加强精确目录解析、递归读取、去重和独立 PDF 处理。
 
 ## 🤖 由智能体驱动的 Zotero Skill
 
@@ -40,17 +40,19 @@ flowchart LR
 
 ## ✨ 主要功能
 
-- 根据 key、精确名称或 `父目录/子目录` 路径解析 Zotero 目录
-- 递归读取子目录，并自动去重
-- 同名目录或目录不存在时明确报错，不擅自猜测
-- 支持全库搜索和目录范围内搜索
-- 读取元数据、附件、笔记、PDF 正文和 Zotero 原生批注
-- 分段连续读取 PDF，不再将前几千字符当作全文
-- 将独立 PDF 作为文档返回，同时过滤论文下面重复的 PDF 附件
-- 支持本地、云端和混合连接模式
-- 笔记及标签写入具有程序级确认保护
-- 输出机器可读 JSON，可接入不同厂商的智能体
-- 不需要 MCP、浏览器插件或后台服务
+与普通的文献库关键词搜索不同，这个 Skill 会按 key、精确名称或 `父目录/子目录` 路径解析 Zotero 目录，递归读取真实条目，并在范围缺失或重名时明确失败。它通过确定性的 JSON CLI 直接读取 Zotero 元数据、PDF、批注和笔记，让每个回答都基于真实文献库内容，而不是从标题或想象中推断。它以 Agent Skill 形式运行，无需 MCP Server、浏览器插件、后台服务或本地模型，同时支持 Zotero 本地、云端和混合访问。它还会保留独立 PDF、避免重复统计论文下的附件，并以程序级显式确认保护每一次笔记或标签写入。
+
+## 🚀 快速开始：一句话自动安装
+
+将下面这一句话直接发送给 Codex、Claude Code、WorkBuddy 或其他具备终端能力并支持 Agent Skills 的 Agent：
+
+```text
+请从 https://github.com/Bubble-OoO/zotero-research-assistant-skill 下载并安装 zotero-research-assistant-skill：优先使用 Git，Git 不可用时下载并解压 ZIP；自动识别当前 Agent 的用户级 Skill 目录并注册，读取仓库说明，检测 Python 3.10+ 或 Conda、安装 requirements.txt、在不覆盖现有配置和凭据的前提下创建 Zotero 本地只读 .env，运行健康检查并确认能够调用；不要配置 MCP 或本地模型，不要让我手动执行命令，只在需要网络、终端或目录写入权限、Zotero 界面设置或新凭据时请求我确认。
+```
+
+Agent 会完成下载、依赖安装、Skill 注册、配置和验证。用户只需检查并批准必要的权限请求；如果 Agent 不支持本地终端或 Agent Skills，它应明确报告不支持，而不是假装安装成功。
+
+安装后默认的 Zotero 数据目录是 `~/Zotero`。如果文献库位于其他位置，请在使用 PDF 回退读取功能前修改 Skill 的 `.env` 文件中的 `ZOTERO_DATA_DIR`。
 
 ## 🎯 为什么目录检索不会再跑偏
 
@@ -78,29 +80,13 @@ Skill 不会把“人机交互”当成全库关键词，而是：
 
 `设置 → 高级 → 允许此计算机上的其他程序与 Zotero 通讯`
 
-## 🚀 快速开始：一句话自动安装
+## 💡 使用案例：直接提出研究目标
 
-将下面这一句话直接发送给 Codex、Claude Code、WorkBuddy 或其他具备终端能力并支持 Agent Skills 的 Agent：
-
-```text
-请从 https://github.com/Bubble-OoO/zotero-research-assistant-skill 下载并安装 zotero-research-assistant-skill：优先使用 Git，Git 不可用时下载并解压 ZIP；自动识别当前 Agent 的用户级 Skill 目录并注册，读取仓库说明，检测 Python 3.10+ 或 Conda、安装 requirements.txt、在不覆盖现有配置和凭据的前提下创建 Zotero 本地只读 .env，运行健康检查并确认能够调用；不要配置 MCP 或本地模型，不要让我手动执行命令，只在需要网络、终端或目录写入权限、Zotero 界面设置或新凭据时请求我确认。
-```
-
-Agent 会完成下载、依赖安装、Skill 注册、配置和验证。用户只需检查并批准必要的权限请求；如果 Agent 不支持本地终端或 Agent Skills，它应明确报告不支持，而不是假装安装成功。
-
-### ▶️ 安装完成后直接使用
-
-配置成功后，新建一个 Codex 任务并直接调用：
+配置成功后，新建一个 Codex 任务并直接提出研究目标。无需记忆命令或参数，例如：
 
 ```text
 $zotero-research-assistant 列出“人机交互”目录及其子目录中的论文
 ```
-
-Agent 会自动读取 `SKILL.md`、检查 Zotero 连接、精确解析目录并运行所需脚本。若没有识别到 Skill，让 Agent 检查 `.agents/skills` 联接并修复；用户无需自行排查路径。
-
-## 💬 日常使用：只需告诉 Agent 目标
-
-无需记忆命令或参数，可以直接提出研究任务，例如：
 
 ```text
 $zotero-research-assistant 查找“人机交互”目录中的论文，并报告实际匹配的目录路径和论文总数
@@ -115,6 +101,8 @@ $zotero-research-assistant 比较“人机交互”目录中这些论文的方�
 ```
 
 Agent 会自行选择目录查询、元数据、PDF 正文、批注或笔记工具，并根据真实 Zotero 返回值回答，不需要用户运行 Python。
+
+若没有识别到 Skill，让 Agent 检查 `.agents/skills` 联接并修复；用户无需自行排查路径。
 
 ## 🔌 连接配置也交给 Agent
 

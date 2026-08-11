@@ -21,8 +21,8 @@ It uses a local Python JSON CLI rather than an MCP server. The agent reads `SKIL
 
 ## 🆕 NEW
 
-- **260811** — Added one-sentence automatic installation: an Agent can download the repository, register the Skill, install dependencies, create a safe local configuration, and verify the connection.
-- **260809** — Reworked the project as an Agent-driven Zotero Skill without MCP; strengthened exact collection resolution, recursive retrieval, deduplication, and standalone PDF handling.
+- 📢 **260811** — Added one-sentence automatic installation: an Agent can download the repository, register the Skill, install dependencies, create a safe local configuration, and verify the connection.
+- 📢 **260809** — Reworked the project as an Agent-driven Zotero Skill without MCP; strengthened exact collection resolution, recursive retrieval, deduplication, and standalone PDF handling.
 
 ## 🤖 Agent-driven Zotero Skill
 
@@ -40,17 +40,19 @@ flowchart LR
 
 ## ✨ Highlights
 
-- Exact collection lookup by key, name, or `parent/child` path
-- Recursive collection browsing with deduplication
-- Clear errors for missing or ambiguous collection names
-- Library-wide or collection-scoped search
-- Metadata, attachments, notes, PDF text, and native annotation retrieval
-- Repeatable PDF text windows for reading beyond the first few thousand characters
-- Standalone PDFs included as documents, while child PDF attachments are deduplicated
-- Local, cloud, and hybrid connection modes
-- Program-level confirmation gate for note and tag writes
-- Machine-readable JSON output for agent-neutral integration
-- No MCP server, browser extension, or background daemon required
+Unlike generic library search, the Skill resolves Zotero collections exactly by key, name, or `parent/child` path, retrieves their real contents recursively, and fails clearly when the scope is missing or ambiguous. It grounds every answer in live Zotero metadata, PDFs, annotations, and notes through a deterministic JSON CLI instead of inferring from titles or imagined library contents. It runs as an Agent Skill with no MCP server, browser extension, background daemon, or local-model runtime, while supporting local, cloud, and hybrid Zotero access. It also handles standalone PDFs without double-counting child attachments and protects every note or tag write with an explicit program-level confirmation gate.
+
+## 🚀 Quick start: one-sentence automatic installation
+
+Send the following single sentence to Codex, Claude Code, WorkBuddy, or another terminal-capable Agent with Agent Skills support:
+
+```text
+Download and install zotero-research-assistant-skill from https://github.com/Bubble-OoO/zotero-research-assistant-skill: prefer Git, but download and extract the ZIP if Git is unavailable; detect and register it in the current Agent's user-level Skills directory, read the repository instructions, detect Python 3.10+ or Conda, install requirements.txt, create a local read-only Zotero .env without overwriting existing configuration or credentials, run the health check, and confirm that the Skill can be invoked; do not configure MCP or a local model, do not ask me to run commands manually, and request my input only for network, terminal, or protected-directory approval, Zotero UI settings, or new credentials.
+```
+
+The Agent handles download, dependency installation, Skill registration, configuration, and validation. The user only reviews and approves required permission prompts. If the Agent lacks local terminal or Agent Skills support, it should report that limitation instead of claiming success.
+
+The default Zotero data directory after installation is `~/Zotero`. If your library is stored elsewhere, update `ZOTERO_DATA_DIR` in the Skill's `.env` file before using PDF fallback access.
 
 ## 🎯 Why collection results stay relevant
 
@@ -78,29 +80,13 @@ In Zotero, enable:
 
 `Settings → Advanced → Allow other applications on this computer to communicate with Zotero`
 
-## 🚀 Quick start: one-sentence automatic installation
+## 💡 Case studies: start with a research goal
 
-Send the following single sentence to Codex, Claude Code, WorkBuddy, or another terminal-capable Agent with Agent Skills support:
-
-```text
-Download and install zotero-research-assistant-skill from https://github.com/Bubble-OoO/zotero-research-assistant-skill: prefer Git, but download and extract the ZIP if Git is unavailable; detect and register it in the current Agent's user-level Skills directory, read the repository instructions, detect Python 3.10+ or Conda, install requirements.txt, create a local read-only Zotero .env without overwriting existing configuration or credentials, run the health check, and confirm that the Skill can be invoked; do not configure MCP or a local model, do not ask me to run commands manually, and request my input only for network, terminal, or protected-directory approval, Zotero UI settings, or new credentials.
-```
-
-The Agent handles download, dependency installation, Skill registration, configuration, and validation. The user only reviews and approves required permission prompts. If the Agent lacks local terminal or Agent Skills support, it should report that limitation instead of claiming success.
-
-### ▶️ Use it immediately after installation
-
-After setup succeeds, start a new Codex task and invoke:
+After setup succeeds, start a new Codex task and ask for the research outcome directly. You do not need to remember commands or flags; for example:
 
 ```text
 $zotero-research-assistant List papers in the “Human-Computer Interaction” collection and its subcollections.
 ```
-
-The Agent loads `SKILL.md`, checks the Zotero connection, resolves the collection exactly, and runs the required scripts. If the Skill is not discovered, ask the Agent to inspect and repair the `.agents/skills` link; users do not need to debug paths themselves.
-
-## 💬 Daily use: tell the Agent your goal
-
-You do not need to remember commands or flags. Ask for the research outcome directly, for example:
 
 ```text
 $zotero-research-assistant Find papers in the “Human-Computer Interaction” collection, then report the resolved collection path and total paper count.
@@ -115,6 +101,8 @@ $zotero-research-assistant Compare the methods, datasets, and limitations of the
 ```
 
 The Agent selects collection, metadata, PDF text, annotation, or note tools automatically and grounds its answer in real Zotero output. Users do not run Python.
+
+If the Skill is not discovered, ask the Agent to inspect and repair the `.agents/skills` link; users do not need to debug paths themselves.
 
 ## 🔌 Let the Agent manage connection settings
 
