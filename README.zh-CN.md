@@ -1,6 +1,6 @@
 <div align="center">
 
-# Zotero Research Assistant Skill
+# 📚 Zotero Research Assistant Skill
 
 **让 Codex、Claude Code、WorkBuddy 等智能体在本地访问 Zotero，且无需 MCP。**
 
@@ -13,18 +13,18 @@
 
 </div>
 
-## 项目简介
+## 🔎 项目简介
 
 Zotero Research Assistant 是一个可移植的 **Agent Skill**，可以让 Codex、Claude Code、WorkBuddy 以及其他具备终端执行能力的智能体搜索和分析真实的 Zotero 文献库。
 
 项目不启动 MCP Server，而是提供本地 Python JSON CLI。智能体读取 `SKILL.md`，执行确定性的本地命令，并根据 Zotero 返回的真实数据回答，避免凭空猜测用户的文献库内容。
 
-## NEW
+## 🆕 NEW
 
 - **260811** — 新增“一句话自动安装”：Agent 可自动下载仓库、注册 Skill、安装依赖、创建安全的本地配置并验证连接。
 - **260809** — 将项目重构为无需 MCP、由 Agent 驱动的 Zotero Skill，并加强精确目录解析、递归读取、去重和独立 PDF 处理。
 
-## 由智能体驱动的 Zotero Skill
+## 🤖 由智能体驱动的 Zotero Skill
 
 本仓库不包含或启动任何大语言模型、模型 SDK、独立聊天程序或本地模型运行时。所有推理均由 Codex、Claude Code、WorkBuddy 或其他兼容 Agent 完成，Agent 会自动调用本项目提供的 Zotero 工具。本文中的“本地模式”仅指 **Zotero 本地 API**，不表示本地 AI 模型。
 
@@ -38,7 +38,7 @@ flowchart LR
     E --> G["经确认的可选写操作"]
 ```
 
-## 主要功能
+## ✨ 主要功能
 
 - 根据 key、精确名称或 `父目录/子目录` 路径解析 Zotero 目录
 - 递归读取子目录，并自动去重
@@ -52,7 +52,7 @@ flowchart LR
 - 输出机器可读 JSON，可接入不同厂商的智能体
 - 不需要 MCP、浏览器插件或后台服务
 
-## 为什么目录检索不会再跑偏
+## 🎯 为什么目录检索不会再跑偏
 
 当用户提出：
 
@@ -67,7 +67,7 @@ Skill 不会把“人机交互”当成全库关键词，而是：
 
 如果目录不存在或存在多个同名目录，命令会失败并要求明确范围，不会返回不相关论文。
 
-## 环境要求
+## 📋 环境要求
 
 - Python 3.10+
 - Zotero 7+，用于本地 API 和全文索引
@@ -78,7 +78,7 @@ Skill 不会把“人机交互”当成全库关键词，而是：
 
 `设置 → 高级 → 允许此计算机上的其他程序与 Zotero 通讯`
 
-## 快速开始：一句话自动安装
+## 🚀 快速开始：一句话自动安装
 
 将下面这一句话直接发送给 Codex、Claude Code、WorkBuddy 或其他具备终端能力并支持 Agent Skills 的 Agent：
 
@@ -88,7 +88,7 @@ Skill 不会把“人机交互”当成全库关键词，而是：
 
 Agent 会完成下载、依赖安装、Skill 注册、配置和验证。用户只需检查并批准必要的权限请求；如果 Agent 不支持本地终端或 Agent Skills，它应明确报告不支持，而不是假装安装成功。
 
-### 安装完成后直接使用
+### ▶️ 安装完成后直接使用
 
 配置成功后，新建一个 Codex 任务并直接调用：
 
@@ -98,7 +98,7 @@ $zotero-research-assistant 列出“人机交互”目录及其子目录中的�
 
 Agent 会自动读取 `SKILL.md`、检查 Zotero 连接、精确解析目录并运行所需脚本。若没有识别到 Skill，让 Agent 检查 `.agents/skills` 联接并修复；用户无需自行排查路径。
 
-## 日常使用：只需告诉 Agent 目标
+## 💬 日常使用：只需告诉 Agent 目标
 
 无需记忆命令或参数，可以直接提出研究任务，例如：
 
@@ -116,7 +116,7 @@ $zotero-research-assistant 比较“人机交互”目录中这些论文的方�
 
 Agent 会自行选择目录查询、元数据、PDF 正文、批注或笔记工具，并根据真实 Zotero 返回值回答，不需要用户运行 Python。
 
-## 连接配置也交给 Agent
+## 🔌 连接配置也交给 Agent
 
 默认使用 Zotero 桌面端本地只读模式，不需要 Zotero API key。如需检查或切换模式，直接提出：
 
@@ -134,7 +134,7 @@ $zotero-research-assistant 帮我配置 Zotero 云端或混合模式。先检查
 
 Agent 会负责检查并更新 `.env`。不要把 API key 粘贴到对话或提交到 Git；需要新凭据时，Agent 应让用户通过安全的本地方式填写。完整参数和跨 Agent 发现位置见 [references/setup.md](references/setup.md)。
 
-## 独立 PDF 由 Agent 自动处理
+## 📄 独立 PDF 由 Agent 自动处理
 
 Zotero 可以将 PDF 存放在正式文献条目下面，也可以把 PDF 作为没有父条目的独立附件。
 
@@ -142,7 +142,7 @@ Zotero 可以将 PDF 存放在正式文献条目下面，也可以把 PDF 作为
 - 没有父条目的独立 PDF 会被保留，并标记为 `"standaloneAttachment": true`。
 - 如果独立 PDF 缺少作者、年份或 DOI，Agent 会明确指出缺失信息，并提示用户在 Zotero 中使用“检索 PDF 元数据”，不会编造元数据。
 
-## 写操作由 Agent 执行并要求确认
+## 🔐 写操作由 Agent 执行并要求确认
 
 可以直接要求 Agent 添加笔记或标签：
 
@@ -152,7 +152,7 @@ $zotero-research-assistant 根据这篇论文的 PDF 内容起草一条 Zotero �
 
 Agent 会先展示完整写入内容。用户在下一条消息中明确确认后，Agent 才会自动执行写入；未确认时 CLI 会拒绝操作。写入需要具备写权限的 Zotero API key，但用户不需要自行运行写入命令。
 
-## 测试与故障排查也交给 Agent
+## 🧪 测试与故障排查也交给 Agent
 
 在项目目录中直接告诉 Codex：
 
@@ -162,7 +162,7 @@ Agent 会先展示完整写入内容。用户在下一条消息中明确确认�
 
 如果 Skill 尚未被识别，也可以在源码目录中使用这段普通提示。Agent 会检查解释器、依赖、`.env`、Skill 联接和 Zotero 连接。只有启动 Zotero、开启 Zotero 本地通讯、提供新凭据、批准受保护的文件操作和确认外部写入必须由用户完成。
 
-## 项目结构
+## 🗂️ 项目结构
 
 ```text
 zotero-research-assistant-skill/
@@ -182,7 +182,7 @@ zotero-research-assistant-skill/
 └── tests/
 ```
 
-## 设计参考
+## 🔗 设计参考
 
 项目参考了以下开源项目的能力设计：
 
